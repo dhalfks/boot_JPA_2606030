@@ -1,11 +1,16 @@
 package com.example.boot.controller;
 
+import com.example.boot.dto.BoardDTO;
 import com.example.boot.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -23,5 +28,19 @@ public class BoardController {
 
     @GetMapping("/register")
     public void register(){}
+
+    @PostMapping("/register")
+    public String register(BoardDTO boardDTO){
+        log.info(">> boardDTO >> {}", boardDTO);
+        Long bno = boardService.insert(boardDTO);
+
+        return "redirect:/board/list";
+    }
+
+    @GetMapping("/list")
+    public void list(Model model){
+        List<BoardDTO> list = boardService.getList();
+        model.addAttribute("list", list);
+    }
 
 }
