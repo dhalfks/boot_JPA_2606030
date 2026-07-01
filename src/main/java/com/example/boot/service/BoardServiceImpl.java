@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -41,5 +42,30 @@ public class BoardServiceImpl implements BoardService{
 //                .map(this :: convertEntityToDto)
                 .toList();
         return boardDTOList;
+    }
+
+    @Override
+    public BoardDTO getDetail(Long bno) {
+        // findOne => 기본키를 이용하여 원하는 객체 검색 where bno
+        // findBy칼럼명 => 원하는 칼럼명을 이용하여 검색
+        // findById = findOne
+        // Optional<T> : nullPointException이 발생하지 않도록 도와줌
+        // Optional.isEmpty() : null 이면 true / false
+        // Optional.isPresent() : 값이 있는지 없는지 확인 true / false
+        // Optional.get() : 객체 가져오기
+        Optional<Board> optional =  boardRepository.findById(bno);
+        if(optional.isPresent()){
+            Board board = optional.get();
+            BoardDTO boardDTO = convertEntityToDto(board);
+            // 조회수 올리기 readCount + 1
+            // update board set read_count = read_count+1 where bno = bno
+            // save()
+            // 변경된 객체로 객체를 수정 => 저장
+            board.setReadCount(board.getReadCount()+1);
+            boardRepository.save(board);
+
+            return boardDTO;
+        }
+        return null;
     }
 }
