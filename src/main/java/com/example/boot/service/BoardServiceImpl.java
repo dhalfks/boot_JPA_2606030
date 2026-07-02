@@ -5,6 +5,9 @@ import com.example.boot.entity.Board;
 import com.example.boot.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -87,5 +90,19 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public void remove(Long bno) {
         boardRepository.deleteById(bno);
+    }
+
+    @Override
+    public Page<BoardDTO> getList(int pageNo) {
+        // 페이지네이션이 포함된 리스트
+        // limit 시작번지, 개수 => 번지는 0부터 시작
+        Pageable pageable = PageRequest.of(pageNo-1, 10,
+                Sort.by("bno").descending());
+        Page<Board> pageList = boardRepository.findAll(pageable);
+        log.info("pageList >> {}", pageList);
+
+        // Page<Board>  =>  Page<BoardDTO> 변환
+        Page<BoardDTO> boardDTOPage = pageList.map(this :: convertEntityToDto);
+        return boardDTOPage;
     }
 }

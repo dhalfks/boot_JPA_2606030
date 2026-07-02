@@ -1,9 +1,11 @@
 package com.example.boot.controller;
 
 import com.example.boot.dto.BoardDTO;
+import com.example.boot.handler.PagingHandler;
 import com.example.boot.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,10 +41,26 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
+//    @GetMapping("/list")
+//    public void list(Model model){
+//        // 페이징 없는 리스트
+//        List<BoardDTO> list = boardService.getList();
+//        model.addAttribute("list", list);
+//    }
+
     @GetMapping("/list")
-    public void list(Model model){
-        List<BoardDTO> list = boardService.getList();
-        model.addAttribute("list", list);
+    public void list(Model model,
+                     @RequestParam(name = "pageNo", required = false,
+                             defaultValue = "1") int pageNo){
+        Page<BoardDTO> list = boardService.getList(pageNo);
+//        model.addAttribute("list",list);
+//        log.info("getTotalElements >> {}", list.getTotalElements()); // 전체 게시글 수
+//        log.info("getTotalPages >> {}", list.getTotalPages()); // realEndPage
+//        log.info("list >> {}", list.hasPrevious()); // 이전 버튼의 필요 여부
+//        log.info("list >> {}", list.hasNext()); // 다음 버튼의 필요 여부
+        PagingHandler ph = new PagingHandler(list,pageNo);
+        log.info("ph>>{}",ph);
+        model.addAttribute("ph",ph);
     }
 
     @GetMapping("/detail")
