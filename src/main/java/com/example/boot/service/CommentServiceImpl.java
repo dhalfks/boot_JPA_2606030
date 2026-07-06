@@ -8,6 +8,10 @@ import com.example.boot.repository.CommentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +58,18 @@ public class CommentServiceImpl implements CommentService{
         return commentDTOList;
     }
 
+    @Override
+    public Page<CommentDTO> getList(long bno, int page) {
+        // select * from comment where bno = #{bno}
+        // order by cno desc limit page, qty;
+        // Page 된 값을 리턴받으려면 pageable 값을 파라미터로 전송
+        Pageable pageable = PageRequest.of(page-1, 5,
+                Sort.by("cno").descending());
+        Page<Comment> list = commentRepository.findByBno(bno, pageable);
+
+        return list.map(this::convertEntityToDto);
+    }
+
     @Transactional
     @Override
     public void remove(long cno) {
@@ -66,4 +82,6 @@ public class CommentServiceImpl implements CommentService{
         board.setCmtQty(board.getCmtQty()-1);
         commentRepository.deleteById(cno);
     }
+
+
 }

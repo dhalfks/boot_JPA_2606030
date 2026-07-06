@@ -4,6 +4,7 @@ import com.example.boot.dto.CommentDTO;
 import com.example.boot.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,12 +31,23 @@ public class CommentController {
                 new ResponseEntity<String>("0", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @GetMapping(value = "/list/{bno}",
+/*    @GetMapping(value = "/list/{bno}",
      produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CommentDTO>> list(@PathVariable("bno") long bno){
+        // paging 없는 리스트
         List<CommentDTO> list = commentService.getList(bno);
         log.info("list>>{}", list);
         return new ResponseEntity<List<CommentDTO>>(list, HttpStatus.OK);
+    }  */
+
+    @GetMapping(value = "/list/{bno}/{page}",
+     produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<CommentDTO>> list(@PathVariable("bno") long bno,
+                                                 @PathVariable("page") int page){
+        Page<CommentDTO> list = commentService.getList(bno, page);
+
+        log.info("list>>{}", list);
+        return new ResponseEntity<Page<CommentDTO>>(list, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/remove/{cno}")

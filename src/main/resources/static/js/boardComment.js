@@ -32,8 +32,8 @@ document.getElementById('cmtAddBtn').addEventListener('click',()=>{
 });
 
 // list를 화면에 출력하는 함수
-function spreadCommentList(bno) {
-    commentListFromServer(bno).then(result =>{
+function spreadCommentList(bno, page=1) {
+    commentListFromServer(bno, page).then(result =>{
         console.log(result);
         const ul = document.getElementById('cmtListArea');
         if(result.length > 0){
@@ -53,6 +53,10 @@ function spreadCommentList(bno) {
                 li+=`</li>`;
             }
             ul.innerHTML = li;
+
+            // page 처리 => moreBtn data-page = +1
+            // 아직 리스트가 더 있다면  버튼 표시
+
         }else{
             // 댓글이 없는 경우
             ul.innerHTML = `<li class="list-group-item shadow-sm rounded-2">등록된 댓글이 없습니다.</li>`;
@@ -98,9 +102,9 @@ async function registerCommentToServer(cmtData){
 }
 
 // list
-async function commentListFromServer(bno){
+async function commentListFromServer(bno, page){
     try{
-        const response = await fetch("/comment/list/"+bno);
+        const response = await fetch(`/comment/list/${bno}/${page}`);
         const result = await response.json();
         return result;
     }catch (e) {

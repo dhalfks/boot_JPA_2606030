@@ -1,6 +1,8 @@
 package com.example.boot.repository;
 
 import com.example.boot.entity.Comment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,4 +15,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
         List<Comment> findByBno(Long bno);
     * */
     List<Comment> findByBno(Long bno);
+
+    Page<Comment> findByBno(Long bno, Pageable pageable);
+
 }
