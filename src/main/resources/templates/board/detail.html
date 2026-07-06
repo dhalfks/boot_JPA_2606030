@@ -64,7 +64,9 @@
 
     </div>
 
-
+    <script th:inline="javascript">
+        const bno = [[${board.bno}]];
+    </script>
 
     <script th:src="@{/js/boardModify.js}"></script>
     <script th:src="@{/js/boardComment.js}"></script>
