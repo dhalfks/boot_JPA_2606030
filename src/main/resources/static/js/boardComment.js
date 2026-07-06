@@ -36,27 +36,36 @@ function spreadCommentList(bno, page=1) {
     commentListFromServer(bno, page).then(result =>{
         console.log(result);
         const ul = document.getElementById('cmtListArea');
-        if(result.length > 0){
+        if(result.content.length > 0){
             // 댓글이 있는 경우
+            if(page == 1){
+                ul.innerHTML = '';
+            }
             let li = '';
-            for(let comment of result){
+            for(let comment of result.content){
                 li+=`<li class="list-group-item shadow-sm rounded-2" data-cno="${comment.cno}">`;
                 li+=`<div class="ms-2 me-auto"> no. ${comment.cno}`;
                 li+=`<div class="fw-bold">${comment.writer}</div>`;
                 li+=`${comment.content}`;
                 li+=`</div>`;
                 li+=`<div class="d-flex justify-content-end gap-2">`;
-                li+=`<span class="badge rounded-pill text-bg-primary">${comment.regDate}</span>`;
+                li+=`<span class="badge rounded-pill text-bg-primary">${comment.regDate.substring(0,10)} ${comment.regDate.substring(comment.regDate.indexOf("T")+1, comment.regDate.lastIndexOf("."))}</span>`;
                 li+=`<button type="button" class="btn btn-outline-warning btn-sm mod">%</button>`;
                 li+=`<button type="button" class="btn btn-outline-danger btn-sm del">X</button>`;
                 li+=`</div>`;
                 li+=`</li>`;
             }
-            ul.innerHTML = li;
+            ul.innerHTML += li;
 
             // page 처리 => moreBtn data-page = +1
+            const moreBtn = document.getElementById('moreBtn');
             // 아직 리스트가 더 있다면  버튼 표시
-
+            if(page < result.totalPages){
+                moreBtn.style.visibility = "visible";  // 표시
+                moreBtn.dataset.page = parseInt(page) + 1;
+            }else{
+                moreBtn.style.visibility = "hidden"; // 숨김
+            }
         }else{
             // 댓글이 없는 경우
             ul.innerHTML = `<li class="list-group-item shadow-sm rounded-2">등록된 댓글이 없습니다.</li>`;
@@ -64,7 +73,12 @@ function spreadCommentList(bno, page=1) {
     });
 }
 
-document.getElementById('cmtListArea').addEventListener('click',(e)=>{
+document.addEventListener('click',(e)=>{
+    if(e.target.id == 'moreBtn'){
+        // 더보기 버튼을 클릭했을 때 => 남아있는 게시글 5개를 더 출력 => 비동기 호출
+        spreadCommentList(bno, parseInt(e.target.dataset.page));
+    }
+
     if(e.target.classList.contains("del")){
         // 삭제버튼 인지
         // cno 값 추출 => closest (내가 속한 내 부모 값 찾기)
