@@ -53,4 +53,17 @@ public class CommentServiceImpl implements CommentService{
         log.info("commentDTOList >> {}", commentDTOList);
         return commentDTOList;
     }
+
+    @Transactional
+    @Override
+    public void remove(long cno) {
+        Comment comment = commentRepository.findById(cno)
+                .orElseThrow(()-> new EntityNotFoundException());
+
+        // 댓글 개수 1개 줄이기
+        Board board = boardRepository.findById(comment.getBno())
+                .orElseThrow(()-> new EntityNotFoundException());
+        board.setCmtQty(board.getCmtQty()-1);
+        commentRepository.deleteById(cno);
+    }
 }

@@ -26,29 +26,55 @@ document.getElementById('cmtAddBtn').addEventListener('click',()=>{
             alert("댓글 등록 실패!");
             cmtText.focus();
         }
+        // 댓글 리스트 호출
+        spreadCommentList(bno);
     });
-    // 댓글 리스트 호출
+});
+
+// list를 화면에 출력하는 함수
+function spreadCommentList(bno) {
     commentListFromServer(bno).then(result =>{
         console.log(result);
+        const ul = document.getElementById('cmtListArea');
+        if(result.length > 0){
+            // 댓글이 있는 경우
+            let li = '';
+            for(let comment of result){
+                li+=`<li class="list-group-item shadow-sm rounded-2" data-cno="${comment.cno}">`;
+                li+=`<div class="ms-2 me-auto"> no. ${comment.cno}`;
+                li+=`<div class="fw-bold">${comment.writer}</div>`;
+                li+=`${comment.content}`;
+                li+=`</div>`;
+                li+=`<div class="d-flex justify-content-end gap-2">`;
+                li+=`<span class="badge rounded-pill text-bg-primary">${comment.regDate}</span>`;
+                li+=`<button type="button" class="btn btn-outline-warning btn-sm mod">%</button>`;
+                li+=`<button type="button" class="btn btn-outline-danger btn-sm del">X</button>`;
+                li+=`</div>`;
+                li+=`</li>`;
+            }
+            ul.innerHTML = li;
+        }else{
+            // 댓글이 없는 경우
+            ul.innerHTML = `<li class="list-group-item shadow-sm rounded-2">등록된 댓글이 없습니다.</li>`;
+        }
     });
+}
 
+document.getElementById('cmtListArea').addEventListener('click',(e)=>{
+    if(e.target.classList.contains("del")){
+        // 삭제버튼 인지
+        // cno 값 추출 => closest (내가 속한 내 부모 값 찾기)
+        let li = e.target.closest('li');
+        let cno = li.dataset.cno;
+        commentRemoveToServer(cno).then(result =>{
+            if(result == "1"){
+                alert("삭제성공!!");
+                spreadCommentList(bno);
+            }
+        })
+    }
 })
 
-
-/* <ul class="list-group list-group-flush" id="cmtListArea">
-            <li class="list-group-item shadow-sm rounded-2">
-                <div class="ms-2 me-auto">
-                    <div class="fw-bold">writer</div>
-                    content가 많아지면 글자는 어떻게 될까요???
-                </div>
-                <span class="badge rounded-pill text-bg-primary">regDate</span>
-                <div class="d-flex justify-content-end gap-2">
-                    <button type="button" class="btn btn-outline-warning btn-sm">%</button>
-                    <button type="button" class="btn btn-outline-danger btn-sm">X</button>
-                </div>
-            </li>
-        </ul>
-* */
 
 
 // 전송 async 데이터 보내기
@@ -76,6 +102,19 @@ async function commentListFromServer(bno){
     try{
         const response = await fetch("/comment/list/"+bno);
         const result = await response.json();
+        return result;
+    }catch (e) {
+        console.log(e);
+    }
+}
+
+// remove
+async function commentRemoveToServer(cno){
+    try{
+        // fetch(url, config)
+        const response = await fetch("/comment/remove/"+cno,
+            {method:"delete"});
+        const result = await response.text();
         return result;
     }catch (e) {
         console.log(e);
