@@ -22,7 +22,12 @@
             <tr th:each="board:${ph.list}">
                 <th scope="row">[[${board.bno}]]</th>
                 <td>
-                    <a th:href="@{/board/detail(bno=${board.bno})}">[[${board.title}]]</a>
+                    <a th:href="@{/board/detail(bno=${board.bno})}">[[${board.title}]]
+                        <div class="d-flex justify-content-end gap-2">
+                            <span class="badge text-bg-warning">[[${board.cmtQty}]]</span>
+                            <span class="badge text-bg-primary">[[${board.fileQty}]]</span>
+                        </div>
+                    </a>
                 </td>
                 <td>[[${board.writer}]]</td>
                 <td>[[${#strings.substring(board.regDate,0,10)}]]</td>

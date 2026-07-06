@@ -28,4 +28,5 @@ public interface CommentService {
                 .build();
     }
 
+    long post(CommentDTO commentDTO);
 }
