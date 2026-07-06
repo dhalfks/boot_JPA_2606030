@@ -49,8 +49,9 @@ function spreadCommentList(bno, page=1) {
                 li+=`${comment.content}`;
                 li+=`</div>`;
                 li+=`<div class="d-flex justify-content-end gap-2">`;
-                li+=`<span class="badge rounded-pill text-bg-primary">${comment.regDate.substring(0,10)} ${comment.regDate.substring(comment.regDate.indexOf("T")+1, comment.regDate.lastIndexOf("."))}</span>`;
-                li+=`<button type="button" class="btn btn-outline-warning btn-sm mod">%</button>`;
+                li+=`<span class="badge rounded-pill text-bg-primary">${comment.regDate}</span>`;
+                //li+=`<span class="badge rounded-pill text-bg-primary">${comment.regDate.substring(0,10)} ${comment.regDate.substring(comment.regDate.indexOf("T")+1, comment.regDate.lastIndexOf("."))}</span>`;
+                li+=`<button type="button" class="btn btn-outline-warning btn-sm mod" data-bs-toggle="modal" data-bs-target="#commentModal">%</button>`;
                 li+=`<button type="button" class="btn btn-outline-danger btn-sm del">X</button>`;
                 li+=`</div>`;
                 li+=`</li>`;
