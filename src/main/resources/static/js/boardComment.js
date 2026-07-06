@@ -28,8 +28,28 @@ document.getElementById('cmtAddBtn').addEventListener('click',()=>{
         }
     });
     // 댓글 리스트 호출
+    commentListFromServer(bno).then(result =>{
+        console.log(result);
+    });
 
 })
+
+
+/* <ul class="list-group list-group-flush" id="cmtListArea">
+            <li class="list-group-item shadow-sm rounded-2">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">writer</div>
+                    content가 많아지면 글자는 어떻게 될까요???
+                </div>
+                <span class="badge rounded-pill text-bg-primary">regDate</span>
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-outline-warning btn-sm">%</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm">X</button>
+                </div>
+            </li>
+        </ul>
+* */
+
 
 // 전송 async 데이터 보내기
 async function registerCommentToServer(cmtData){
@@ -45,6 +65,17 @@ async function registerCommentToServer(cmtData){
 
         const response = await  fetch(url, config);
         const result = await response.text();
+        return result;
+    }catch (e) {
+        console.log(e);
+    }
+}
+
+// list
+async function commentListFromServer(bno){
+    try{
+        const response = await fetch("/comment/list/"+bno);
+        const result = await response.json();
         return result;
     }catch (e) {
         console.log(e);

@@ -3,6 +3,8 @@ package com.example.boot.service;
 import com.example.boot.dto.CommentDTO;
 import com.example.boot.entity.Comment;
 
+import java.util.List;
+
 public interface CommentService {
 
     //convert
@@ -17,7 +19,7 @@ public interface CommentService {
     }
 
     // Entity => DTO
-    default CommentDTO convertEntityToDto(Comment comment){
+    default CommentDTO convertEntityToDto(Comment comment) {
         return CommentDTO.builder()
                 .cno(comment.getCno())
                 .bno(comment.getBno())
@@ -29,4 +31,6 @@ public interface CommentService {
     }
 
     long post(CommentDTO commentDTO);
+
+    List<CommentDTO> getList(long bno);
 }

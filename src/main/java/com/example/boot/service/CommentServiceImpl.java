@@ -2,6 +2,7 @@ package com.example.boot.service;
 
 import com.example.boot.dto.CommentDTO;
 import com.example.boot.entity.Board;
+import com.example.boot.entity.Comment;
 import com.example.boot.repository.BoardRepository;
 import com.example.boot.repository.CommentRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -38,5 +40,17 @@ public class CommentServiceImpl implements CommentService{
         board.setCmtQty(board.getCmtQty()+1);
         long cno = commentRepository.save(convertDtoToEntity(commentDTO)).getCno();
         return cno;
+    }
+
+    @Override
+    public List<CommentDTO> getList(long bno) {
+        // select * from comment where bno = #{bno}
+        List<Comment> list = commentRepository.findByBno(bno);
+        log.info("commentList >> {}", list);
+        List<CommentDTO> commentDTOList = list.stream()
+                .map(comment -> convertEntityToDto(comment))
+                .toList();
+        log.info("commentDTOList >> {}", commentDTOList);
+        return commentDTOList;
     }
 }
