@@ -4,10 +4,12 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}"
 >
-<div layout:fragment="content" class="container-md my-5">
+<div layout:fragment="content" class="container-md my-5"
+     th:with="board = ${boardFile.boardDTO},
+        fileList = ${boardFile.fileList}">
 <!--  여기가 main  -->
-
     <h1>[ no.[[${board.bno}]] ] Detail Page</h1>
+    [[${boardFile}]]
     <form action="/board/update" method="post" class="my-5" id="modForm">
         <input type="hidden" name="bno" th:value="${board.bno}">
         <div class="mb-3">

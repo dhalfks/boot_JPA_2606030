@@ -19,11 +19,11 @@ public class FileDTO {
     private Long fileSize;
     private LocalDateTime regDate, modDate;
 
-    public String getRegDate() {
-        return regDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    }
-
-    public String getModDate() {
-        return modDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    }
+//    public String getRegDate() {
+//        return regDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+//    }
+//
+//    public String getModDate() {
+//        return modDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+//    }
 }

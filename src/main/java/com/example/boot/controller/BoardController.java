@@ -1,6 +1,9 @@
 package com.example.boot.controller;
 
 import com.example.boot.dto.BoardDTO;
+import com.example.boot.dto.BoardFileDTO;
+import com.example.boot.dto.FileDTO;
+import com.example.boot.handler.FileHandler;
 import com.example.boot.handler.PagingHandler;
 import com.example.boot.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -22,6 +26,7 @@ import java.util.List;
 @Controller
 public class BoardController {
     private final BoardService boardService;
+    private final FileHandler fileHandler;
 
 /*    @GetMapping("/register")
     public String register(){
@@ -34,9 +39,21 @@ public class BoardController {
     public void register(){}
 
     @PostMapping("/register")
-    public String register(BoardDTO boardDTO){
+    public String register(BoardDTO boardDTO,
+                           @RequestParam(name = "files", required = false)MultipartFile[] files){
+        // 추가된 파일 처리
+        // DB로 갈 fileDto 객체 만들기
+        // 실제 저장
+        List<FileDTO> fileList = null;
+        if(files != null && files[0].getSize() > 0){
+            // 파일이 존재한다면...  핸들러를 호출
+            fileList = fileHandler.uploadFile(files);
+        }
         log.info(">> boardDTO >> {}", boardDTO);
-        Long bno = boardService.insert(boardDTO);
+        log.info(">> fileList >> {}", fileList);
+        Long bno = boardService.insert(new BoardFileDTO(boardDTO, fileList));
+
+        //Long bno = boardService.insert(boardDTO);
 
         return "redirect:/board/list";
     }
@@ -65,8 +82,8 @@ public class BoardController {
 
     @GetMapping("/detail")
     public void detail(@RequestParam("bno") Long bno, Model model){
-        BoardDTO boardDTO = boardService.getDetail(bno);
-        model.addAttribute("board", boardDTO);
+        BoardFileDTO boardFileDTO = boardService.getDetail(bno);
+        model.addAttribute("boardFile", boardFileDTO);
     }
 
     @PostMapping("/update")

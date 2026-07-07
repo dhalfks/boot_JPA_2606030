@@ -1,8 +1,12 @@
 package com.example.boot.service;
 
 import com.example.boot.dto.BoardDTO;
+import com.example.boot.dto.BoardFileDTO;
+import com.example.boot.dto.FileDTO;
 import com.example.boot.entity.Board;
+import com.example.boot.entity.File;
 import com.example.boot.repository.BoardRepository;
+import com.example.boot.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -10,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +24,28 @@ import java.util.Optional;
 @Service
 public class BoardServiceImpl implements BoardService{
     private final BoardRepository boardRepository;
+    private final FileRepository fileRepository;
+
+    @Transactional
+    @Override
+    public Long insert(BoardFileDTO boardFileDTO) {
+        Board board = convertDtoToEntity(boardFileDTO.getBoardDTO());
+        List<FileDTO> fileDTOList = boardFileDTO.getFileList();
+        // fileQty 값만 넣어서 저장
+        if(fileDTOList != null){
+            board.setFileQty(fileDTOList.size());
+        }
+        long bno = boardRepository.save(board).getBno();
+        // bno 얻어서 fileDto bno setting
+        if(bno > 0 && fileDTOList != null){
+            for(FileDTO fileDTO : fileDTOList){
+                fileDTO.setBno(bno);
+                fileRepository.save(convertDtoToEntity(fileDTO));
+            }
+        }
+
+        return bno;
+    }
 
     @Override
     public Long insert(BoardDTO boardDTO) {
@@ -48,7 +75,7 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public BoardDTO getDetail(Long bno) {
+    public BoardFileDTO getDetail(Long bno) {
         // findOne => 기본키를 이용하여 원하는 객체 검색 where bno
         // findBy칼럼명 => 원하는 칼럼명을 이용하여 검색
         // findById = findOne
@@ -67,7 +94,15 @@ public class BoardServiceImpl implements BoardService{
             board.setReadCount(board.getReadCount()+1);
             boardRepository.save(board);
 
-            return boardDTO;
+            // fileList 가져오기 bno가 일치하는 값의 리스트
+            List<File> fileList = fileRepository.findByBno(bno);
+            List<FileDTO> fileDTOList = fileList.stream()
+                    .map(this::convertEntityToDto)
+                    .toList();
+
+            BoardFileDTO boardFileDTO = new BoardFileDTO(boardDTO, fileDTOList);
+
+            return boardFileDTO;
         }
         return null;
     }
@@ -105,4 +140,6 @@ public class BoardServiceImpl implements BoardService{
         Page<BoardDTO> boardDTOPage = pageList.map(this :: convertEntityToDto);
         return boardDTOPage;
     }
+
+
 }

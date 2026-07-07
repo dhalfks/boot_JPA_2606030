@@ -1,6 +1,7 @@
 package com.example.boot.service;
 
 import com.example.boot.dto.BoardDTO;
+import com.example.boot.dto.BoardFileDTO;
 import com.example.boot.dto.FileDTO;
 import com.example.boot.entity.Board;
 import com.example.boot.entity.File;
@@ -50,7 +51,7 @@ public interface BoardService {
     // 페이징 없는 리스트 메서드
     List<BoardDTO> getList();
 
-    BoardDTO getDetail(Long bno);
+    BoardFileDTO getDetail(Long bno);
 
     void update(BoardDTO boardDTO);
 
@@ -84,4 +85,6 @@ public interface BoardService {
                 .modDate(file.getModDate())
                 .build();
     }
+
+    Long insert(BoardFileDTO boardFileDTO);
 }
