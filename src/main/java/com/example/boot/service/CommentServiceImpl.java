@@ -87,7 +87,7 @@ public class CommentServiceImpl implements CommentService{
     @Transactional
     @Override
     public long modify(CommentDTO commentDTO) {
-        Comment comment = commentRepository.findById(commentDTO.getBno())
+        Comment comment = commentRepository.findById(commentDTO.getCno())
                 .orElseThrow(()-> new EntityNotFoundException("해당 댓글을 찾을 수 없습니다."));
         comment.setContent(commentDTO.getContent());
         return comment.getCno();

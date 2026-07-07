@@ -22,7 +22,8 @@
             <tr th:each="board:${ph.list}">
                 <th scope="row">[[${board.bno}]]</th>
                 <td>
-                    <a th:href="@{/board/detail(bno=${board.bno})}">[[${board.title}]]
+                    <a th:href="@{/board/detail(bno=${board.bno})}" class="d-flex justify-content-between link-underline link-underline-opacity-0 link-underline-opacity-100-hover">
+                        <div>[[${board.title}]]</div>
                         <div class="d-flex justify-content-end gap-2">
                             <span class="badge text-bg-warning">[[${board.cmtQty}]]</span>
                             <span class="badge text-bg-primary">[[${board.fileQty}]]</span>

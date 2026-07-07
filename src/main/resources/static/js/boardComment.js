@@ -49,7 +49,8 @@ function spreadCommentList(bno, page=1) {
                 li+=`${comment.content}`;
                 li+=`</div>`;
                 li+=`<div class="d-flex justify-content-end gap-2">`;
-                li+=`<span class="badge rounded-pill text-bg-primary">${comment.regDate}</span>`;
+                li+=`<span class="badge rounded-pill text-bg-primary align-content-center">${comment.regDate}</span>`;
+                li+=`<span class="badge rounded-pill text-bg-warning align-content-center">${comment.modDate}</span>`;
                 //li+=`<span class="badge rounded-pill text-bg-primary">${comment.regDate.substring(0,10)} ${comment.regDate.substring(comment.regDate.indexOf("T")+1, comment.regDate.lastIndexOf("."))}</span>`;
                 li+=`<button type="button" class="btn btn-outline-warning btn-sm mod" data-bs-toggle="modal" data-bs-target="#commentModal">%</button>`;
                 li+=`<button type="button" class="btn btn-outline-danger btn-sm del">X</button>`;
@@ -187,7 +188,7 @@ async function commentUpdateToServer(modData){
         const config = {
             method: 'put',
             headers: {
-                'conent-type': 'application/json; charset=utf-8'
+                'content-type': 'application/json; charset=utf-8'
             },
             body: JSON.stringify(modData)
         }
