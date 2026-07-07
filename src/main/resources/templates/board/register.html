@@ -21,7 +21,19 @@
             <label for="c" class="form-label">Content</label>
             <textarea class="form-control" id="c" name="content" rows="10" cols="30"></textarea>
         </div>
+        <!-- file upload 추가 -->
+        <div class="mb-3">
+            <!--multiple 하나의 input에 여러개의 파일 업로드-->
+            <input type="file" class="form-control" id="file"
+                   name="files" multiple style="display: none">
+            <button type="button" id="trigger" class="btn btn-outline-dark">File Upload</button>
+        </div>
+        <!--file print-->
+        <div class="mb-3" id="fileZone"></div>
+
         <button type="submit" class="btn btn-primary">register</button>
+
+        <script th:src="@{/js/boardRegister.js}"></script>
 
     </form>
 </div>

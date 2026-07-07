@@ -1,7 +1,9 @@
 package com.example.boot.service;
 
 import com.example.boot.dto.BoardDTO;
+import com.example.boot.dto.FileDTO;
 import com.example.boot.entity.Board;
+import com.example.boot.entity.File;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -55,4 +57,31 @@ public interface BoardService {
     void remove(Long bno);
 
     Page<BoardDTO> getList(int pageNo);
+
+    // file convert
+    // FileDTO => FileEntity (date x)
+    default File convertDtoToEntity(FileDTO fileDTO){
+        return File.builder()
+                .uuid(fileDTO.getUuid())
+                .saveDir(fileDTO.getSaveDir())
+                .fileName(fileDTO.getFileName())
+                .fileType(fileDTO.getFileType())
+                .bno(fileDTO.getBno()) // 의미 없는 값 => 나중에 따로 설정해야 됨.
+                .fileSize(fileDTO.getFileSize())
+                .build();
+    }
+
+    // FileEntity => FileDTO (date o)
+    default FileDTO convertEntityToDto(File file){
+        return FileDTO.builder()
+                .uuid(file.getUuid())
+                .saveDir(file.getSaveDir())
+                .fileName(file.getFileName())
+                .fileType(file.getFileType())
+                .bno(file.getBno())
+                .fileSize(file.getFileSize())
+                .regDate(file.getRegDate())
+                .modDate(file.getModDate())
+                .build();
+    }
 }
