@@ -75,6 +75,46 @@ function spreadCommentList(bno, page=1) {
 }
 
 document.addEventListener('click',(e)=>{
+    if(e.target.classList.contains("mod")){
+        // mod 버튼을 클릭하면 수정할 데이터를 modal에 띄우기
+        // modal 화면에 보낼 데이터 cno, writer, content
+
+        // closest : 내가 속해있는 내 부모의 객체를 가져오기
+        let li = e.target.closest('li');
+        let cno = li.dataset.cno;
+        let cmtWriter = li.querySelector('.fw-bold').innerText;
+        // nextSibling : 같은 부모 밑에 있는 다른 형제 찾기
+        let cmtText = li.querySelector('.fw-bold').nextSibling;
+        console.log(cno);
+        console.log(cmtWriter);
+        console.log(cmtText.nodeValue);
+
+        document.getElementById('cmtWriterMod').innerHTML=
+            `no.${cno}  <b>${cmtWriter}</b>`;
+        document.getElementById('cmtTextMod').value = cmtText.nodeValue;
+        // cmtModBtn => data-cno="" 속성 추가
+        document.getElementById('cmtModBtn').setAttribute("data-cno", cno);
+    }
+
+    if(e.target.id == 'cmtModBtn'){
+        // modal 수정 버튼 => {cno, content} => 비동기 전송
+        let modData={
+            cno: e.target.dataset.cno,
+            content: document.getElementById('cmtTextMod').value
+        }
+        console.log(modData);
+        // 비동기 전송
+        commentUpdateToServer(modData). then(result => {
+            if(result == '1'){
+                alert("수정 성공!!");
+            }
+            // 변경된 댓글 출력
+            spreadCommentList(bno);
+            // 모달 창 닫기
+            document.querySelector(".btn-close").click();
+        })
+    }
+
     if(e.target.id == 'moreBtn'){
         // 더보기 버튼을 클릭했을 때 => 남아있는 게시글 5개를 더 출력 => 비동기 호출
         spreadCommentList(bno, parseInt(e.target.dataset.page));
@@ -134,6 +174,26 @@ async function commentRemoveToServer(cno){
         const response = await fetch("/comment/remove/"+cno,
             {method:"delete"});
         const result = await response.text();
+        return result;
+    }catch (e) {
+        console.log(e);
+    }
+}
+
+// update
+async function commentUpdateToServer(modData){
+    try {
+        const url = '/comment/modify';
+        const config = {
+            method: 'put',
+            headers: {
+                'conent-type': 'application/json; charset=utf-8'
+            },
+            body: JSON.stringify(modData)
+        }
+
+        const response = await fetch(url, config);
+        const result = await  response.text();
         return result;
     }catch (e) {
         console.log(e);

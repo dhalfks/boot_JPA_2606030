@@ -1,6 +1,7 @@
 package com.example.boot.controller;
 
 import com.example.boot.dto.CommentDTO;
+import com.example.boot.entity.Comment;
 import com.example.boot.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,15 @@ public class CommentController {
     @DeleteMapping(value = "/remove/{cno}")
     public ResponseEntity<String> remove(@PathVariable("cno") long cno){
         commentService.remove(cno);
+        return cno > 0 ? new ResponseEntity<String>("1", HttpStatus.OK) :
+                new ResponseEntity<String>("0", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PutMapping(value = "/modify",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> modify(@RequestBody CommentDTO commentDTO){
+        long cno = commentService.modify(commentDTO);
         return cno > 0 ? new ResponseEntity<String>("1", HttpStatus.OK) :
                 new ResponseEntity<String>("0", HttpStatus.INTERNAL_SERVER_ERROR);
     }

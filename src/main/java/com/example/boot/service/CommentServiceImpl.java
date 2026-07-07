@@ -70,6 +70,29 @@ public class CommentServiceImpl implements CommentService{
         return list.map(this::convertEntityToDto);
     }
 
+    /* save() => id가 없으면 insert / id가 있으면 update
+    EntityNotFoundException : where 에서 검색한 조건의 값이 없을경우 발생
+    정보 유실 가능성이 커짐
+    dirty checking (변동 감지)
+    findById(cno) 먼저 조회 => 영속상태를 만든 후 수정 => save()
+     @Transactional => dirty checking만으로 업데이트를 가능 => save() 없이도 업데이트가능
+
+     dirty cheking
+     엔티티가 영속성 컨텍스트에 올라가 있는 상태 일때 (=영속상태)
+     해당 객체의 필드가 변경되면, 트랜젝션이 종료되기 전에 JPA가 변경한 부분만
+     자동으로 감지하여 update 쿼리를 실행
+     save()가 없어도 (명시적으로 호출하지 않아도) 수정된 필드를 DB에 자동 반영 가능.
+    * */
+
+    @Transactional
+    @Override
+    public long modify(CommentDTO commentDTO) {
+        Comment comment = commentRepository.findById(commentDTO.getBno())
+                .orElseThrow(()-> new EntityNotFoundException("해당 댓글을 찾을 수 없습니다."));
+        comment.setContent(commentDTO.getContent());
+        return comment.getCno();
+    }
+
     @Transactional
     @Override
     public void remove(long cno) {
