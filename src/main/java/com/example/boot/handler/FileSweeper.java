@@ -4,13 +4,16 @@ import com.example.boot.dto.FileDTO;
 import com.example.boot.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.ssl.SslProperties;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 // 스케줄링 사용
@@ -41,6 +44,35 @@ public class FileSweeper {
         List<FileDTO> dbFileList = boardService.getTodayFileList(today);
         log.info(">>> dbFileList >> {}", dbFileList);
 
+        List<String> currFile = new ArrayList<>();
+        for(FileDTO fileDTO : dbFileList){
+            String fileName = BASE_PATH + today + File.separator + fileDTO.getUuid()+"_"+fileDTO.getFileName();
+            currFile.add(fileName);
+            // 이미지 파일이라면 썸네일도 추가
+            if(fileDTO.getFileType() == 1){
+                String fileThName = BASE_PATH + today + File.separator + fileDTO.getUuid()+"_th_"+fileDTO.getFileName();
+                currFile.add(fileThName);
+            }
+        }
+        log.info(">>> currFile >> {}", currFile);
+
+        // today 경로 기반 저장된 파일 검색
+        // D:\web_260316_omr\_myProject\_java\_fileUpload\2026\07\08
+        File dir = Paths.get(BASE_PATH+today).toFile();
+
+        // 해당 경로 안에 있는 파일을 가져오기 (배열로 리턴)
+        File[] allFileObject = dir.listFiles();
+
+        // allFileObject, currFile 비교하여 DB에 존재하지 않는 파일은 삭제
+        // DB가 기준
+        for(File file: allFileObject){
+            String storedFileName = file.toPath().toString();
+            if(!currFile.contains(storedFileName)){
+                // currFile 안에 storedFileName이 존재하지 않는다면
+                file.delete(); // 삭제
+                log.info(">>> 삭제되는 파일이름 >> {}", storedFileName);
+            }
+        }
 
         log.info(">>>>> fileSweeper End >> {}", LocalDateTime.now());
     }
