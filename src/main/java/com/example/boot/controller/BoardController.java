@@ -68,14 +68,19 @@ public class BoardController {
     @GetMapping("/list")
     public void list(Model model,
                      @RequestParam(name = "pageNo", required = false,
-                             defaultValue = "1") int pageNo){
-        Page<BoardDTO> list = boardService.getList(pageNo);
+                             defaultValue = "1") int pageNo,
+                     @RequestParam(name = "type", required = false) String type,
+                     @RequestParam(name = "keyword", required = false) String keyword){
+        log.info("type >> {}", type);
+        log.info("keyword >> {}", keyword);
+        // page + search
+        Page<BoardDTO> list = boardService.getList(pageNo, type, keyword);
 //        model.addAttribute("list",list);
 //        log.info("getTotalElements >> {}", list.getTotalElements()); // 전체 게시글 수
 //        log.info("getTotalPages >> {}", list.getTotalPages()); // realEndPage
 //        log.info("list >> {}", list.hasPrevious()); // 이전 버튼의 필요 여부
 //        log.info("list >> {}", list.hasNext()); // 다음 버튼의 필요 여부
-        PagingHandler ph = new PagingHandler(list,pageNo);
+        PagingHandler ph = new PagingHandler(list,pageNo, type, keyword);
         log.info("ph>>{}",ph);
         model.addAttribute("ph",ph);
     }

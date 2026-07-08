@@ -103,6 +103,12 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
+    public Page<BoardDTO> getList(int pageNo, String type, String keyword) {
+        // page + search
+        return null;
+    }
+
+    @Override
     public Long insert(BoardDTO boardDTO) {
         // CRUD에 해당하는 메서드 제공
         // save() : 저장

@@ -22,11 +22,15 @@ public class PagingHandler {
 
     private List<BoardDTO> list;
 
+    private String type;
+    private String keyword;
+
     public PagingHandler(Page<BoardDTO> list, int pageNo){
         this.list = list.getContent(); // page에서 list만 가져올 때
         this.pageNo = pageNo;
         this.totalPage = list.getTotalPages();
         this.totalElement = list.getTotalElements();
+
         // endPage 구하는 공식 1~10까지 => 10  11~20 => 20
         // pageNo / 10.0 => 0.1 (올림) => 1 * 10
         this.endPage = (int)Math.ceil(this.pageNo / 10.0)*10;
@@ -37,6 +41,12 @@ public class PagingHandler {
 
         this.prev = startPage > 1;
         this.next = endPage < totalPage;
+    }
+
+    public PagingHandler(Page<BoardDTO> list, int pageNo, String type, String keyword){
+        this(list,pageNo);
+        this.type = type;
+        this.keyword = keyword;
     }
 
 }

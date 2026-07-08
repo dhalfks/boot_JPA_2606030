@@ -95,4 +95,6 @@ public interface BoardService {
     void modify(BoardFileDTO boardFileDTO);
 
     List<FileDTO> getTodayFileList(String today);
+
+    Page<BoardDTO> getList(int pageNo, String type, String keyword);
 }
