@@ -4,6 +4,7 @@ import com.example.boot.dto.BoardDTO;
 import com.example.boot.dto.BoardFileDTO;
 import com.example.boot.dto.FileDTO;
 import com.example.boot.handler.FileHandler;
+import com.example.boot.handler.FileRemoveHandler;
 import com.example.boot.handler.PagingHandler;
 import com.example.boot.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -105,7 +106,17 @@ public class BoardController {
     public ResponseEntity<String> fileRemove(@PathVariable("uuid")String uuid){
         // 비동기
         log.info("uuid >>> {}", uuid);
-        return new ResponseEntity<String>("1", HttpStatus.OK);
+        // 폴더에 있는 파일을 먼저 삭제 후 DB의 데이터를 삭제
+        FileDTO removeFile = boardService.getFile(uuid);
+        FileRemoveHandler fileRemoveHandler = new FileRemoveHandler();
+        boolean isDel = fileRemoveHandler.removeFile(removeFile);
+        long bno = 0;
+        if(isDel){
+            // db 삭제요청
+            bno = boardService.fileRemove(uuid);
+        }
+        return bno > 0 ? new ResponseEntity<String>("1", HttpStatus.OK) :
+            new ResponseEntity<String>("0", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

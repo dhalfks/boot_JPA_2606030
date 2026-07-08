@@ -87,4 +87,8 @@ public interface BoardService {
     }
 
     Long insert(BoardFileDTO boardFileDTO);
+
+    FileDTO getFile(String uuid);
+
+    long fileRemove(String uuid);
 }

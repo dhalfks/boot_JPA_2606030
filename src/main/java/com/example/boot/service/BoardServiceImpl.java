@@ -5,8 +5,10 @@ import com.example.boot.dto.BoardFileDTO;
 import com.example.boot.dto.FileDTO;
 import com.example.boot.entity.Board;
 import com.example.boot.entity.File;
+import com.example.boot.handler.FileRemoveHandler;
 import com.example.boot.repository.BoardRepository;
 import com.example.boot.repository.FileRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -45,6 +47,27 @@ public class BoardServiceImpl implements BoardService{
         }
 
         return bno;
+    }
+
+    @Override
+    public FileDTO getFile(String uuid) {
+        File file = fileRepository.findById(uuid)
+                .orElseThrow(()-> new EntityNotFoundException("해당 파일이 없습니다."));
+        FileDTO fileDTO = convertEntityToDto(file);
+        return fileDTO;
+    }
+
+    @Transactional
+    @Override
+    public long fileRemove(String uuid) {
+        File file = fileRepository.findById(uuid)
+                .orElseThrow(()-> new EntityNotFoundException("해당 파일이 없습니다."));
+        // 파일 갯수 차감 -1
+        Board board = boardRepository.findById(file.getBno())
+                .orElseThrow(()-> new EntityNotFoundException("해당 파일이 없습니다."));
+        board.setFileQty(board.getFileQty()-1);
+        fileRepository.deleteById(uuid);
+        return board.getBno();
     }
 
     @Override
