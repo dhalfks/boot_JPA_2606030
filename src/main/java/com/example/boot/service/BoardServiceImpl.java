@@ -70,6 +70,25 @@ public class BoardServiceImpl implements BoardService{
         return board.getBno();
     }
 
+    @Transactional
+    @Override
+    public void modify(BoardFileDTO boardFileDTO) {
+        Board board = boardRepository.findById(boardFileDTO.getBoardDTO().getBno())
+                .orElseThrow(()-> new EntityNotFoundException("존재하지 않는 게시글입니다."));
+        board.setTitle(boardFileDTO.getBoardDTO().getTitle());
+        board.setContent(boardFileDTO.getBoardDTO().getContent());
+        board.setReadCount(board.getReadCount()-1);
+
+        if(boardFileDTO.getFileList() != null){
+            board.setFileQty(board.getFileQty()+boardFileDTO.getFileList().size());
+            for(FileDTO fileDTO : boardFileDTO.getFileList()){
+                // bno가 없음.
+                fileDTO.setBno(board.getBno());
+                fileRepository.save(convertDtoToEntity(fileDTO));
+            }
+        }
+    }
+
     @Override
     public Long insert(BoardDTO boardDTO) {
         // CRUD에 해당하는 메서드 제공

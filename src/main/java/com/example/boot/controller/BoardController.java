@@ -88,8 +88,14 @@ public class BoardController {
 
     @PostMapping("/update")
     public String update(BoardDTO boardDTO,
-                         RedirectAttributes redirectAttributes){
-        boardService.update(boardDTO);
+                         RedirectAttributes redirectAttributes,
+                         @RequestParam(name = "files", required = false)MultipartFile[] files){
+        List<FileDTO> fileDTOList = null;
+        if(files != null && files[0].getSize() > 0){
+            fileDTOList = fileHandler.uploadFile(files);
+        }
+        boardService.modify(new BoardFileDTO(boardDTO, fileDTOList));
+        //boardService.update(boardDTO);
 
         // redirect시 해당 위치로 객체를 보내주는 역할
         redirectAttributes.addAttribute("bno",boardDTO.getBno());

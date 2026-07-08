@@ -91,4 +91,6 @@ public interface BoardService {
     FileDTO getFile(String uuid);
 
     long fileRemove(String uuid);
+
+    void modify(BoardFileDTO boardFileDTO);
 }
