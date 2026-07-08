@@ -9,12 +9,11 @@ import com.example.boot.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -49,8 +48,8 @@ public class BoardController {
             // 파일이 존재한다면...  핸들러를 호출
             fileList = fileHandler.uploadFile(files);
         }
-        log.info(">> boardDTO >> {}", boardDTO);
-        log.info(">> fileList >> {}", fileList);
+        //log.info(">> boardDTO >> {}", boardDTO);
+        //log.info(">> fileList >> {}", fileList);
         Long bno = boardService.insert(new BoardFileDTO(boardDTO, fileList));
 
         //Long bno = boardService.insert(boardDTO);
@@ -100,6 +99,13 @@ public class BoardController {
     public String remove(@RequestParam("bno")Long bno){
         boardService.remove(bno);
         return "redirect:/board/list";
+    }
+
+    @DeleteMapping("/file/{uuid}")
+    public ResponseEntity<String> fileRemove(@PathVariable("uuid")String uuid){
+        // 비동기
+        log.info("uuid >>> {}", uuid);
+        return new ResponseEntity<String>("1", HttpStatus.OK);
     }
 
 }

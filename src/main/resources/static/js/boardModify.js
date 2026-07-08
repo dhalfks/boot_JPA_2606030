@@ -11,6 +11,7 @@ document.getElementById('modBtn').addEventListener('click',()=>{
     // <button></button>
     let regBtn = document.createElement('button');
     regBtn.setAttribute('type','submit');
+    regBtn.setAttribute('id','regBtn');
     regBtn.classList.add('btn', 'btn-success');
     regBtn.innerText="update";
 
@@ -21,4 +22,40 @@ document.getElementById('modBtn').addEventListener('click',()=>{
     document.getElementById('modBtn').remove();
     document.getElementById('delBtn').remove();
     document.getElementById('listBtn').remove();
+
+    // (trigger) file upload 버튼 표시
+    document.getElementById('trigger').style.display="block";
+
+    // file-x 버튼 표시
+    // style-visibility: hidden => file.style.visibility="visible"
+    let fileDelBtn = document.querySelectorAll(".file-x");
+    fileDelBtn.forEach(btn => {
+        btn.style.visibility="visible";
+        // btn 을 클릭하면 비동기로 uuid 보내서 DB상에서 파일 삭제
+        btn.addEventListener('click',(e)=>{
+            let uuid = e.target.dataset.uuid;
+            // 비동기 호출
+            fileRemoveToServer(uuid).then(result =>{
+                if(result == "1"){
+                    // 지워진 그림을 화면에서 삭제
+                    e.target.closest('li').remove();
+                }
+            })
+        })
+    })
 })
+
+async function fileRemoveToServer(uuid){
+    try {
+        const url = "/board/file/"+uuid;
+        const config = {
+            method: 'delete'
+        }
+
+        const response = await fetch(url, config);
+        const result = await response.text();
+        return result;
+    }catch (e) {
+        console.log(e);
+    }
+}

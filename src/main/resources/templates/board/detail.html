@@ -9,7 +9,7 @@
         fileList = ${boardFile.fileList}">
 <!--  여기가 main  -->
     <h1>[ no.[[${board.bno}]] ] Detail Page</h1>
-    [[${boardFile}]]
+
     <form action="/board/update" method="post" class="my-5" id="modForm">
         <input type="hidden" name="bno" th:value="${board.bno}">
         <div class="mb-3">
@@ -46,9 +46,21 @@
                     </div>
                     <div class="mb-3 fw-bold">[[${fileDTO.fileName}]]</div>
                     <span class="badge rounded-pill text-bg-warning">[[${fileDTO.regDate}]] / [[${fileDTO.fileSize}]]bytes</span>
+                    <button type="button" class="btn btn-outline-danger file-x"
+                            style="visibility: hidden" th:data-uuid="${fileDTO.uuid}">x</button>
                 </li>
             </ul>
         </div>
+
+        <!-- file upload 추가 -->
+        <div class="mb-3">
+            <!--multiple 하나의 input에 여러개의 파일 업로드-->
+            <input type="file" class="form-control" id="file"
+                   name="files" multiple style="display: none">
+            <button type="button" style="display: none" id="trigger" class="btn btn-outline-dark">File Upload</button>
+        </div>
+        <!--file print-->
+        <div class="mb-3" id="fileZone"></div>
     </form>
 
     <a th:href="@{#}" class="text-decoration-none">
@@ -120,6 +132,7 @@
 
     <script th:src="@{/js/boardModify.js}"></script>
     <script th:src="@{/js/boardComment.js}"></script>
+    <script th:src="@{/js/boardRegister.js}"></script>
     <script>
         spreadCommentList(bno);
     </script>
