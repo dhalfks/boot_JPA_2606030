@@ -8,4 +8,6 @@ import java.util.List;
 public interface FileRepository extends JpaRepository<File, String> {
 
     List<File> findByBno(Long bno);
+
+    List<File> findBySaveDir(String today);
 }

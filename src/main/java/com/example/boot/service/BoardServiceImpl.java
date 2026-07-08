@@ -90,6 +90,19 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
+    public List<FileDTO> getTodayFileList(String today) {
+        // select * from file where save_dir = today
+        // findBy**  => repository에 등록
+        List<File> fileList = fileRepository.findBySaveDir(today);
+        if(fileList != null || fileList.isEmpty()){
+            return fileList.stream()
+                    .map(this::convertEntityToDto)
+                    .toList();
+        }
+        return null;
+    }
+
+    @Override
     public Long insert(BoardDTO boardDTO) {
         // CRUD에 해당하는 메서드 제공
         // save() : 저장

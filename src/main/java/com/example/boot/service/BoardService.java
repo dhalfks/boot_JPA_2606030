@@ -93,4 +93,6 @@ public interface BoardService {
     long fileRemove(String uuid);
 
     void modify(BoardFileDTO boardFileDTO);
+
+    List<FileDTO> getTodayFileList(String today);
 }
