@@ -26,5 +26,6 @@ public class AuthUser {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "email")
     private User user; // DB의 FK 칼럼명을 적어줌.
+    @Enumerated(EnumType.STRING)
     private AuthRole auth; // Enum의 이름을 문자열로 저장
 }
