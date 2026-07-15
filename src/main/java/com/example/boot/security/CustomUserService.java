@@ -1,6 +1,8 @@
 package com.example.boot.security;
 
+import com.example.boot.entity.User;
 import com.example.boot.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,8 +22,11 @@ public class CustomUserService implements UserDetailsService {
         // security context 객체가 username을 주고 해당 객체의
         // 실제 값을 DB에서 가져와 userDetails 객체로 리턴
         // UserDetails => username, password, 권한
-
-
-        return null;
+        User user = userRepository
+                .findByEmailWithAuth(username)
+                .orElseThrow(()-> new EntityNotFoundException("user not found :"+ username));
+        log.info(" >>>> login User >> {}", user);
+        log.info(" >>>> login User >> {}", user.getAuthList());
+        return new CustomAuthUser(user);
     }
 }

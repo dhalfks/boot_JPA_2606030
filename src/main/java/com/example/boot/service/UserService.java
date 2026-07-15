@@ -44,4 +44,6 @@ public interface UserService {
 
 
     String insert(UserDTO userDTO);
+
+    void lastloginUpdate(String name);
 }

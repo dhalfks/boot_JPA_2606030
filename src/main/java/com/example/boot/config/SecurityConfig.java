@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .usernameParameter("email")
                         .passwordParameter("pwd")
                         .loginPage("/user/login")
+                        //.successForwardUrl("/borad/list") => handler 없이 그냥 forword
                         .successHandler(authenticationSuccessHandler())
                         .failureHandler(authenticationFailureHandler())
                         .permitAll()
