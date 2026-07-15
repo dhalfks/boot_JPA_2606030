@@ -14,7 +14,6 @@ public interface UserService {
                 .email(userDTO.getEmail())
                 .pwd(userDTO.getPwd())
                 .nickName(userDTO.getNickName())
-                .lastLogin(userDTO.getLastLogin())
                 .build();
     }
 
@@ -46,4 +45,8 @@ public interface UserService {
     String insert(UserDTO userDTO);
 
     void lastloginUpdate(String name);
+
+    void grantAdminRole(String adminEmail);
+
+    UserDTO getDetail(String name);
 }

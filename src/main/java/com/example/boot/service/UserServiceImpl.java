@@ -41,4 +41,26 @@ public class UserServiceImpl implements UserService{
         // transactional dirty checking 발생 => update
         user.setLastLogin(LocalDateTime.now());
     }
+
+    @Transactional
+    @Override
+    public void grantAdminRole(String adminEmail) {
+
+        User user = userRepository.findById(adminEmail)
+                .orElseThrow(()-> new EntityNotFoundException("존재하지 않는 회원입니다."));
+        // 이미 admin 권한이 있는지 확인
+        boolean hasAdmin = user.getAuthList().stream()
+                .anyMatch(auth -> auth.getAuth() == AuthRole.ADMIN);
+        if(!hasAdmin){
+            // 영속상태 이므로 dirty checking에 의해 자동 저장됨.
+            user.addAuth(AuthRole.ADMIN);
+        }
+    }
+
+    @Override
+    public UserDTO getDetail(String name) {
+        User user = userRepository.findByEmailWithAuth(name)
+                .orElseThrow(()-> new EntityNotFoundException("해당 유저가 없습니다."));
+        return convertEntityToDto(user);
+    }
 }

@@ -8,8 +8,13 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 import java.io.IOException;
 
@@ -18,6 +23,14 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
     UserService userService;
+
+    // redirect 데이터 정보를 가지고 있는 객체 (redirect로 경로 저장(이동) 역할)
+    RedirectStrategy redirectStrategy =
+            new DefaultRedirectStrategy();
+
+    // 세션정보, 직전 url 정보를 가지고 있는 객체
+    RequestCache requestCache =
+            new HttpSessionRequestCache();
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -36,6 +49,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         }
 
         // 직전 url의 정보로 리다이렉트 해줘야 함
-
+        // 이전 mapping 경로를 가져오기 => 없으면 /board/list로 보내기
+        SavedRequest savedRequest = requestCache.getRequest(request, response);
+        redirectStrategy.sendRedirect(request, response,
+                savedRequest != null ? savedRequest.getRedirectUrl() : "/board/list");
     }
 }
