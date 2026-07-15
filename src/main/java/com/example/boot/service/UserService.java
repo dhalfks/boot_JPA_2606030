@@ -1,6 +1,8 @@
 package com.example.boot.service;
 
+import com.example.boot.dto.AuthUserDTO;
 import com.example.boot.dto.UserDTO;
+import com.example.boot.entity.AuthUser;
 import com.example.boot.entity.User;
 
 public interface UserService {
@@ -13,6 +15,30 @@ public interface UserService {
                 .pwd(userDTO.getPwd())
                 .nickName(userDTO.getNickName())
                 .lastLogin(userDTO.getLastLogin())
+                .build();
+    }
+
+    // Entity -> DTO
+    default UserDTO convertEntityToDto(User user){
+        return UserDTO.builder()
+                .email(user.getEmail())
+                .nickName(user.getNickName())
+                .lastLogin(user.getLastLogin())
+                .regDate(user.getRegDate())
+                .modDate(user.getModDate())
+                .authList(user.getAuthList() == null ?  null :
+                        user.getAuthList().stream()
+                        .map(this :: convertAuthEntityToAuthDto)
+                        .toList())
+                .build();
+    }
+
+    // auth authDTO 변환
+    default AuthUserDTO convertAuthEntityToAuthDto(AuthUser authUser){
+        return AuthUserDTO.builder()
+                .id(authUser.getId())
+                .email(authUser.getUser().getEmail())
+                .role(authUser.getAuth().getRoleName())
                 .build();
     }
 
