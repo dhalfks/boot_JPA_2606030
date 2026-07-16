@@ -14,9 +14,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -47,11 +49,11 @@ public class UserController {
     }
 
     @GetMapping("/admin")
-    public String admin(){
-        String adminEmail = "admin@test.com";
+    public String admin(@RequestParam("email")String adminEmail){
+        //String adminEmail = "admin@test.com";
         userService.grantAdminRole(adminEmail);
         log.info(">>> grantADminRole success!!");
-        return "index";
+        return "redirect:/user/list";
     }
 
     @GetMapping("/modify")
@@ -76,6 +78,30 @@ public class UserController {
             return "redirect:/";
         }else{
             redirectAttributes.addFlashAttribute("modMsg","fail");
+            return "redirect:/user/modify";
+        }
+
+    }
+
+    @GetMapping("/list")
+    public void list(Model model){
+        List<UserDTO> userList = userService.getList();
+        model.addAttribute("userList", userList);
+    }
+
+    @GetMapping("/remove")
+    public String remove(Principal principal,
+                         RedirectAttributes redirectAttributes,
+                         HttpServletRequest request,
+                         HttpServletResponse response){
+        String email = userService.remove(principal.getName());
+
+        if(email != null){
+            redirectAttributes.addFlashAttribute("delMsg","ok");
+            logout(request, response);
+            return "redirect:/";
+        }else{
+            redirectAttributes.addFlashAttribute("delMsg","fail");
             return "redirect:/user/modify";
         }
 

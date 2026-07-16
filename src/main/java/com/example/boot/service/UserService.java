@@ -5,6 +5,8 @@ import com.example.boot.dto.UserDTO;
 import com.example.boot.entity.AuthUser;
 import com.example.boot.entity.User;
 
+import java.util.List;
+
 public interface UserService {
 
     // convert
@@ -51,4 +53,8 @@ public interface UserService {
     UserDTO getDetail(String name);
 
     String modify(UserDTO userDTO);
+
+    List<UserDTO> getList();
+
+    String remove(String name);
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -54,6 +55,9 @@ public class UserServiceImpl implements UserService{
         if(!hasAdmin){
             // 영속상태 이므로 dirty checking에 의해 자동 저장됨.
             user.addAuth(AuthRole.ADMIN);
+        }else{
+            // 이미 있으면 ADMIN 제거
+            user.removeAuth(AuthRole.ADMIN);
         }
     }
 
@@ -78,6 +82,23 @@ public class UserServiceImpl implements UserService{
         // 없으면 nickname만 저장
         user.setNickName(userDTO.getNickName());
         log.info(">>>> changeUser >> {}",user);
+        return user.getEmail();
+    }
+
+    @Override
+    public List<UserDTO> getList() {
+        return userRepository.findByAllwithAuthList()
+                .stream()
+                .map(this :: convertEntityToDto)
+                .toList();
+    }
+
+    @Transactional
+    @Override
+    public String remove(String name) {
+        User user = userRepository.findById(name)
+                .orElseThrow(()-> new EntityNotFoundException("해당 유저가 없습니다."));
+        userRepository.deleteById(name);
         return user.getEmail();
     }
 }
