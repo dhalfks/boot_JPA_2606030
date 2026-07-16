@@ -63,4 +63,21 @@ public class UserServiceImpl implements UserService{
                 .orElseThrow(()-> new EntityNotFoundException("해당 유저가 없습니다."));
         return convertEntityToDto(user);
     }
+
+    @Transactional
+    @Override
+    public String modify(UserDTO userDTO) {
+        User user = userRepository.findById(userDTO.getEmail())
+                .orElseThrow(()-> new EntityNotFoundException("해당 유저가 없습니다."));
+        log.info(">>>> userDTO >> {}",userDTO);
+        // pwd가 있으면 pwd를 encode 한 다음 같이 저장
+        if(!userDTO.getPwd().isEmpty() && userDTO.getPwd() != null){
+            String changePwd = passwordEncoder.encode(userDTO.getPwd());
+            user.setPwd(changePwd);
+        }
+        // 없으면 nickname만 저장
+        user.setNickName(userDTO.getNickName());
+        log.info(">>>> changeUser >> {}",user);
+        return user.getEmail();
+    }
 }

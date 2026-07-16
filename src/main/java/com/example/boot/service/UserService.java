@@ -49,4 +49,6 @@ public interface UserService {
     void grantAdminRole(String adminEmail);
 
     UserDTO getDetail(String name);
+
+    String modify(UserDTO userDTO);
 }

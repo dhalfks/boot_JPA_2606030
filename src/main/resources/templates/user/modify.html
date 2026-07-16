@@ -37,4 +37,11 @@
             </div>
         </div>
     </form>
+    <script th:inline="javascript">
+        const modMsg = [[${modMsg}]];
+        if(modMsg==='fail'){
+            alert("회원정보 수정 실패!! 다시 시도해주세요.");
+        }
+    </script>
+
 </div>
