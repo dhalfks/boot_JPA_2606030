@@ -8,6 +8,9 @@
 <!--  여기가 main  -->
     <h1>Join Page</h1>
     <form action="/user/join" method="post">
+        <!--CSRF 토큰 추가-->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
         <div class="mb-3">
             <label for="e" class="form-label">email</label>
             <input type="text" class="form-control" name="email" id="e" placeholder="test@test.com">

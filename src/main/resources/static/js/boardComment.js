@@ -1,5 +1,10 @@
 console.log("boardComment.js in");
 
+const csrfToken = document.querySelector('meta[name="_csrf"]')
+    .getAttribute('content');
+const csrfHeader = document.querySelector('meta[name="_csrf_header"]')
+    .getAttribute('content');
+
 // cmtAddBtn 버튼을 클릭하면 입력한 댓글과 작성자, bno 값을 controller 전송
 document.getElementById('cmtAddBtn').addEventListener('click',()=>{
     const cmtText = document.getElementById('cmtText');
@@ -146,7 +151,8 @@ async function registerCommentToServer(cmtData){
         const config = {
             method:'post',
             headers : {
-                'content-type': 'application/json; charset=utf-8'
+                'content-type': 'application/json; charset=utf-8',
+                [csrfHeader] : csrfToken
             },
             body: JSON.stringify(cmtData)
         };
@@ -175,7 +181,7 @@ async function commentRemoveToServer(cno){
     try{
         // fetch(url, config)
         const response = await fetch("/comment/remove/"+cno,
-            {method:"delete"});
+            {method:"delete", headers: {[csrfHeader] : csrfToken}});
         const result = await response.text();
         return result;
     }catch (e) {
@@ -190,7 +196,8 @@ async function commentUpdateToServer(modData){
         const config = {
             method: 'put',
             headers: {
-                'content-type': 'application/json; charset=utf-8'
+                'content-type': 'application/json; charset=utf-8',
+                [csrfHeader] : csrfToken
             },
             body: JSON.stringify(modData)
         }

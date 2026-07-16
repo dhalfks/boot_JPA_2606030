@@ -9,6 +9,9 @@
     <h1 class="mb-3">User Modify Page</h1>
 
     <form action="/user/modify" method="post">
+        <!--CSRF 토큰 추가-->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
         <div class="col m-2">
             <div class="card border-dark mb-3" style="max-width: 540px;">
                 <div class="row g-0">
